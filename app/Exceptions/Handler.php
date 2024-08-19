@@ -3,8 +3,12 @@
 namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Response;
 use Throwable;
-
+use Illuminate\Auth\AuthenticationException;
+use Illuminate\Http\Exceptions\HttpResponseException;
 class Handler extends ExceptionHandler
 {
     /**
@@ -27,4 +31,10 @@ class Handler extends ExceptionHandler
             //
         });
     }
+
+    protected function unauthenticated($request, AuthenticationException $exception): Response|JsonResponse|RedirectResponse
+    {
+        return response()->json(['error' => 'Unauthenticated.'], 401);
+    }
+
 }
