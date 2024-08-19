@@ -12,7 +12,10 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-
-Route::get('/', function () {
-    return view('welcome');
+Route::match(['get', 'post'], '/', function () {
+    return response()->json([
+        'success' => false,
+        'errors' => ['message' => 'Page not found']
+    ], 404);
 });
+
