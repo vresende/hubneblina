@@ -38,7 +38,7 @@ return [
     |
     */
 
-    'server' => env('OCTANE_SERVER', 'roadrunner'),
+    'server' => env('OCTANE_SERVER', 'swoole'),
 
     /*
     |--------------------------------------------------------------------------
@@ -51,7 +51,7 @@ return [
     |
     */
 
-    'https' => env('OCTANE_HTTPS', true),
+    'https' => env('OCTANE_HTTPS', false),
 
     /*
     |--------------------------------------------------------------------------
@@ -220,12 +220,5 @@ return [
     */
 
     'max_execution_time' => 30,
-
-    'ssl' => [
-        'local_cert'  => env('OCTANE_SSL_CERT', '/etc/ssl/certs/laravel.crt'),
-        'local_pk'    => env('OCTANE_SSL_KEY', '/etc/ssl/private/laravel.key'),
-        'passphrase'  => null,
-    ],
-
 
 ];
