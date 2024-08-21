@@ -21,7 +21,7 @@ fi
 #chown -R www-data:www-data /var/www/storage
 php artisan key:generate
 # Iniciar o Laravel Octane com Swoole em segundo plano
-php artisan octane:start --watch --server=swoole --host=0.0.0.0 --port=8001 &
+php artisan octane:start --watch --server=swoole --host=0.0.0.0 --port=8081 &
 
 # Manter o contêiner ativo
 tail -f /dev/null

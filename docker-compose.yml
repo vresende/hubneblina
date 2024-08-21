@@ -1,10 +1,8 @@
 services:
-    neblina-laravel-hub:
-        container_name: "neblina-laravel-hub"
+    pj-neblina-laravel-hub:
         build:
             context: ./docker/php
             dockerfile: Dockerfile
-        image: neblina-laravel-hub:1.0.0
         volumes:
             - ./:/var/www
             - ./docker/server_start.sh:/usr/local/bin/server_start.sh
@@ -12,7 +10,7 @@ services:
             - ./storage:/var/www/storage
             - ./vendor:/var/www/vendor
         ports:
-            - "8001:8001"
+            - "8081:8081"
         environment:
             APP_ENV: ${APP_ENV}
             APP_DEBUG: ${APP_DEBUG}
@@ -30,7 +28,7 @@ services:
         deploy:
             resources:
                 limits:
-                    cpus: '2.0'
+                    cpus: '1.0'
                     memory: 2G
 
 networks:
