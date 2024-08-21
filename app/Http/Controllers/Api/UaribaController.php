@@ -37,7 +37,7 @@ class UaribaController extends Controller
                 'catalog_file',
                 file_get_contents($fileFullPath),
                 $request->file('catalog_file')?->getClientOriginalName()
-            )->post('http://172.30.5.9:883/U_ARIBAADV.APL');
+            )->post('http://integracao.grupomater.com.br/U_ARIBAADV.APL');
             unset($fileFullPath);
             // Verifica o status da resposta
             if ($response->successful()) {
