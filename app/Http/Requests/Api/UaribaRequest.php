@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests\Api;
 
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 class UaribaRequest extends FormRequest
 {
@@ -18,21 +20,40 @@ class UaribaRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'file' => 'required|file|mimes:xml|max:10240', // Verifica se o arquivo é XML e tem um tamanho máximo de 10MB
-            'usuario' => 'required|string',
-            'senha' => 'required|string',
+            'catalog_file' => 'required|file|mimes:xml|max:10240',
+            'email' => 'required|string',
+            'password' => 'required|string',
         ];
     }
 
     public function messages(): array
     {
         return [
-            'file.required' => 'O arquivo XML é obrigatório.',
-            'file.file' => 'O arquivo deve ser válido.',
-            'file.mimes' => 'O arquivo deve ser do tipo XML.',
-            'file.max' => 'O arquivo não pode ser maior que 10MB.',
-            'usuario.required' => 'O campo usuário é obrigatório.',
-            'senha.required' => 'O campo senha é obrigatório.',
+            'catalog_file.required' => 'O arquivo XML é obrigatório.',
+            'catalog_file.file' => 'O arquivo deve ser válido.',
+            'catalog_file.mimes' => 'O arquivo deve ser do tipo XML.',
+            'catalog_file.max' => 'O arquivo não pode ser maior que 10MB.',
+            'email.required' => 'O campo email é obrigatório.',
+            'password.required' => 'O campo password é obrigatório.',
         ];
+    }
+
+    /**
+     * Handle a failed validation attempt.
+     *
+     * @param  Validator  $validator
+     * @return void
+     *
+     * @throws HttpResponseException
+     */
+    protected function failedValidation(Validator $validator)
+    {
+        $response = response()->json([
+            'success' => false,
+            'message' => 'Validação falhou',
+            'errors' => $validator->errors(),
+        ], 422);
+
+        throw new HttpResponseException($response);
     }
 }

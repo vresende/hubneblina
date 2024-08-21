@@ -14,6 +14,7 @@ class UaribaController extends Controller
 {
     public function index(UaribaRequest $request): ?JsonResponse
     {
+//dd($request);
         $credentials = $request->only('email', 'password');
 
         if (!auth()->attempt($credentials)) {
