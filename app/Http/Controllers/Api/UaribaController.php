@@ -37,7 +37,12 @@ class UaribaController extends Controller
                 'catalog_file',
                 file_get_contents($fileFullPath),
                 $request->file('catalog_file')?->getClientOriginalName()
-            )->withoutVerifying()->post('https://integracao.grupomater.com.br:883/U_ARIBAADV.AP');
+            )->withOptions([
+                'verify' => false, // Ignora a verificação do certificado
+                'curl' => [
+                    CURLOPT_SSLVERSION => CURL_SSLVERSION_TLSv1_2, // Força o uso do TLS 1.2
+                ],
+            ])->post('https://integracao.grupomater.com.br:883/U_ARIBAADV.AP');
             unset($fileFullPath);
             // Verifica o status da resposta
             if ($response->successful()) {
