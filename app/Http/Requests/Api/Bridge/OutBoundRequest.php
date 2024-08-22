@@ -24,7 +24,15 @@ class OutBoundRequest extends FormRequest
         return [
             'authorization' => 'nullable|array',
             'authorization.type' => 'nullable|string',
-            'authorization.value' => 'nullable|string|array',
+            'authorization.value' => [
+                'nullable',
+                'bail',
+                function ($attribute, $value, $fail) {
+                    if (!is_string($value) && !is_array($value)) {
+                        $fail("O campo $attribute deve ser uma string ou um array.");
+                    }
+                },
+            ],
             'endpoint' => 'required|url',
             'method' => 'required|string|in:get,post,put,delete,patch',
             'body' => 'required|array',
