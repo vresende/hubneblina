@@ -42,7 +42,7 @@ class UaribaController extends Controller
                 'curl' => [
                     CURLOPT_SSLVERSION => CURL_SSLVERSION_TLSv1_2, // Força o uso do TLS 1.2
                 ],
-            ])->post('https://integracao.grupomater.com.br:883/U_ARIBAADV.AP');
+            ])->post('http://integracao.grupomater.com.br:883/U_ARIBAADV.APL');
             unset($fileFullPath);
             // Verifica o status da resposta
             if ($response->successful()) {

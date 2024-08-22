@@ -22,9 +22,9 @@ class OutBoundRequest extends FormRequest
     public function rules()
     {
         return [
-            'authorization' => 'required|array',
-            'authorization.type' => 'required|string',
-            'authorization.value' => 'required|string',
+            'authorization' => 'nullable|array',
+            'authorization.type' => 'nullable|required|string',
+            'authorization.value' => 'required|string|array',
             'endpoint' => 'required|url',
             'method' => 'required|string|in:get,post,put,delete,patch',
             'body' => 'required|array',

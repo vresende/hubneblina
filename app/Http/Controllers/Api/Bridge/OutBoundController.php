@@ -26,7 +26,13 @@ class OutBoundController extends Controller
             $response = Http::withHeaders($headers)
                 ->{strtolower($data['method'])}($data['endpoint'], $data['body']['value']);
 
-            return response()->json(json_decode($response->body()), $response->status());
+            // Preparando a resposta com os headers recebidos
+            $responseBody = json_decode($response->body(), true);
+            $responseStatus = $response->status();
+            $responseHeaders = $response->headers();
+
+            // Criando a resposta JSON com os headers recebidos
+            return response()->json($responseBody, $responseStatus)->withHeaders($responseHeaders);
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
         }
