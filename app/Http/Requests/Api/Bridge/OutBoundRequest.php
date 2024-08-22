@@ -23,8 +23,8 @@ class OutBoundRequest extends FormRequest
     {
         return [
             'authorization' => 'nullable|array',
-            'authorization.type' => 'nullable|required|string',
-            'authorization.value' => 'required|string|array',
+            'authorization.type' => 'nullable|string',
+            'authorization.value' => 'nullable|string|array',
             'endpoint' => 'required|url',
             'method' => 'required|string|in:get,post,put,delete,patch',
             'body' => 'required|array',
