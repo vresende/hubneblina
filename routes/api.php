@@ -15,6 +15,7 @@ Route::post('/login', [AuthController::class,'login'])->name('login');
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/register', [AuthController::class,'register'])->name('register');
     Route::post('/bridge/outbound', OutBoundController::class)->name('outbound');
+    Route::post('/bridge/inbound', OutBoundController::class)->name('bridge.inbound');
 
     Route::get('/user', function (Request $request) {
         return $request->user();
