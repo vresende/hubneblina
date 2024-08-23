@@ -9,9 +9,11 @@
         "guzzlehttp/guzzle": "^7.8",
         "laravel/framework": "^10.10",
         "laravel/octane": "^2.5",
+        "laravel/pulse": "^1.2",
         "laravel/sanctum": "^3.3",
         "laravel/tinker": "^2.8",
-        "swooletw/laravel-swoole": "^2.13"
+        "swooletw/laravel-swoole": "^2.13",
+        "ext-simplexml": "*"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",

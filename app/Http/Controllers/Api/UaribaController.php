@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\UaribaRequest;
 use Exception;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Log\Logger;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 
@@ -41,7 +42,7 @@ class UaribaController extends Controller
             ])->withHeaders([
                 'Content-Type' => 'application/xml', // Define o tipo de conteúdo como XML
             ])->post('http://integracao.grupomater.com.br:883/U_ARIBAADV.APL', $xmlContent);
-
+            logger::info('XML enviado:', ['xml' => $xmlContent]);
             unset($fileFullPath);
 
             // Verifica o status da resposta
