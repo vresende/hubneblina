@@ -11,14 +11,16 @@ class OutBoundRequest extends FormRequest
     /**
      * Determine if the user is authorized to make this request.
      */
-
+    public function authorize()
+    {
+        return true; // Ou implemente sua lógica de autorização
+    }
 
     /**
      * Get the validation rules that apply to the request.
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
-
     public function rules()
     {
         return [
@@ -40,18 +42,26 @@ class OutBoundRequest extends FormRequest
             'body.value' => [
                 'required',
                 function ($attribute, $value, $fail) {
-                    $type = request()->input('body.type');
+                    $type = $this->input('body.type');
 
                     if ($type === 'json') {
-                        json_decode($value);
-                        if (json_last_error() !== JSON_ERROR_NONE) {
-                            $fail('The ' . $attribute . ' must be a valid JSON.');
+                        if (is_string($value)) {
+                            json_decode($value);
+                            if (json_last_error() !== JSON_ERROR_NONE) {
+                                $fail('The ' . $attribute . ' must be a valid JSON string.');
+                            }
+                        } elseif (!is_array($value)) {
+                            $fail('The ' . $attribute . ' must be a valid JSON string or array.');
                         }
                     } elseif ($type === 'xml') {
-                        try {
-                            new \SimpleXMLElement($value);
-                        } catch (\Exception $e) {
-                            $fail('The ' . $attribute . ' must be a valid XML.');
+                        if (is_string($value)) {
+                            try {
+                                new \SimpleXMLElement($value);
+                            } catch (\Exception $e) {
+                                $fail('The ' . $attribute . ' must be a valid XML string.');
+                            }
+                        } else {
+                            $fail('The ' . $attribute . ' must be a valid XML string.');
                         }
                     }
                 },
@@ -59,7 +69,10 @@ class OutBoundRequest extends FormRequest
         ];
     }
 
-    protected function failedValidation(Validator $validator)
+    /**
+     * Handle a failed validation attempt.
+     */
+    protected function failedValidation(Validator $validator): void
     {
         throw new HttpResponseException(response()->json([
             'success' => false,
