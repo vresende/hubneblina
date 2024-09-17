@@ -27,6 +27,14 @@ class AuthController extends Controller
 
     public function register(RegisterRequest $request): JsonResponse
     {
+        if (auth()->user()->email !== 'ti@grupomater.com.br') {
+            return response()->json([
+                'success' => false,
+                'errors' => [
+                    'message' => 'you are not allowed'
+                ]
+            ], 401);
+        }
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',
