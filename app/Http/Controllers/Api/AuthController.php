@@ -20,6 +20,7 @@ class AuthController extends Controller
         }
 
         $user = auth()->user();
+        $user->tokens()->delete();
         $token = $user->createToken('API Token',expiresAt: now()->addHour(1))->plainTextToken;
 
         return response()->json(['token' => $token]);
