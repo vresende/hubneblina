@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Laravel\Sanctum\PersonalAccessToken;
 
 class AuthController extends Controller
 {
@@ -20,7 +21,14 @@ class AuthController extends Controller
         }
 
         $user = auth()->user();
-        $user->tokens()->delete();
+
+        $expiredTokens = PersonalAccessToken::where('expires_at', '<', now());
+
+        foreach ($expiredTokens as $token) {
+            $token->delete();
+        }
+
+
         $token = $user->createToken('API Token',expiresAt: now()->addHour(1))->plainTextToken;
 
         return response()->json(['token' => $token]);
