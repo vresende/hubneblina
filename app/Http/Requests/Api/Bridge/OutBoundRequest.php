@@ -45,10 +45,11 @@ class OutBoundRequest extends FormRequest
                     $type = $this->input('body.type');
 
                     if ($type === 'json') {
-                        if (is_array($value)) {
-                            // Aceita diretamente o array JSON (objeto)
-                            return;
-                        } elseif (is_string($value)) {
+                        if (is_array($value) && !empty($value)) {
+                             return;
+                        }
+
+                        if (is_string($value)) {
                             // Valida a string JSON
                             json_decode($value);
                             if (json_last_error() !== JSON_ERROR_NONE) {
@@ -57,7 +58,8 @@ class OutBoundRequest extends FormRequest
                         } else {
                             $fail('O campo ' . $attribute . ' deve ser um array ou uma string JSON válida.');
                         }
-                    } elseif ($type === 'xml') {
+                    }
+                    if ($type === 'xml') {
                         // Valida XML como string
                         if (is_string($value)) {
                             try {
