@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Http;
 
 class UaribaController extends Controller
 {
-    public function index(Request $request): Application|ResponseFactory|\Illuminate\Foundation\Application|Response
+    public function index(Request $request)
     {
         // Receber o XML do corpo da requisição
         $xmlContent = $request->getContent();
