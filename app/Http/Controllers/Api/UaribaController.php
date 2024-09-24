@@ -6,12 +6,16 @@ use App\Http\Controllers\Controller;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 
 class UaribaController extends Controller
 {
     public function index(Request $request)
     {
+        if (Auth::user()->email !== 'uariba@grupomater.com.br') {
+            return response()->json(['message' => 'Acesso não autorizado.'], 403);
+        }
         // Receber o XML do corpo da requisição
         $xmlContent = $request->getContent();
 
