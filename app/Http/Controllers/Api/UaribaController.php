@@ -25,7 +25,9 @@ class UaribaController extends Controller
             ->withHeaders([
                 'Content-Type' => 'application/xml',
             ])
-            ->post('http://integracao.grupomater.com.br:883/U_ARIBAADV.APL', $xmlContent);
+            ->send('POST', 'http://integracao.grupomater.com.br:883/U_ARIBAADV.APL', [
+                'body' => $xmlContent, // Enviar o conteúdo bruto do XML
+            ]);
 
         // Retornar a resposta do endpoint externo
         return response($response->body(), $response->status())->header('Content-Type', 'application/xml');
