@@ -20,9 +20,7 @@ class UaribaRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'catalog_file' => 'required|file|mimes:xml|max:10240',
-            'email' => 'required|string',
-            'password' => 'required|string',
+
         ];
     }
 
@@ -46,7 +44,7 @@ class UaribaRequest extends FormRequest
      *
      * @throws HttpResponseException
      */
-    protected function failedValidation(Validator $validator)
+    protected function failedValidation(Validator $validator): void
     {
         $response = response()->json([
             'success' => false,

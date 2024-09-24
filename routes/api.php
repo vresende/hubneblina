@@ -20,9 +20,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', function (Request $request) {
         return $request->user();
     });
+    Route::match(['post','get'],'/uariba',[UaribaController::class,'index'])->name('uariba');
 });
 
-Route::match(['post','get'],'/uariba',[UaribaController::class,'index'])->name('uariba')->withoutMiddleware([
-    'auth'
-]);
 
