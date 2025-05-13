@@ -5,6 +5,8 @@ namespace App\Http\Requests\Api\Bridge;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Validation\Rule;
+
 
 class OutBoundRequest extends FormRequest
 {
@@ -37,42 +39,53 @@ class OutBoundRequest extends FormRequest
             ],
             'endpoint' => 'required|url',
             'method' => 'required|string|in:get,post,put,delete,patch',
-            'body' => 'required|array',
-            'body.type' => 'required|string|in:json,xml',
-            'body.value' => [
-                'required',
-                function ($attribute, $value, $fail) {
-                    $type = $this->input('body.type');
+			'body' => [
+				Rule::requiredIf(fn() => strtolower($this->input('method')) === 'get'),
+				'array'
+			],
+			'body.type' => [
+				Rule::requiredIf(fn() => strtolower($this->input('method')) === 'get'),
+				'string',
+				'in:json,xml'
+			],
+			'body.value' => [
+				Rule::requiredIf(fn() => strtolower($this->input('method')) === 'get'),
+				function ($attribute, $value, $fail) {
+					if (!$this->input('body')) {
+						return;
+					}
 
-                    if ($type === 'json') {
-                        if (is_array($value) && !empty($value)) {
-                             return;
-                        }
+					$type = $this->input('body.type');
 
-                        if (is_string($value)) {
-                            // Valida a string JSON
-                            json_decode($value);
-                            if (json_last_error() !== JSON_ERROR_NONE) {
-                                $fail('O campo ' . $attribute . ' deve ser uma string JSON válida.');
-                            }
-                        } else {
-                            $fail('O campo ' . $attribute . ' deve ser um array ou uma string JSON válida.');
-                        }
-                    }
-                    if ($type === 'xml') {
-                        // Valida XML como string
-                        if (is_string($value)) {
-                            try {
-                                new \SimpleXMLElement($value);
-                            } catch (\Exception $e) {
-                                $fail('O campo ' . $attribute . ' deve ser uma string XML válida.');
-                            }
-                        } else {
-                            $fail('O campo ' . $attribute . ' deve ser uma string XML válida.');
-                        }
-                    }
-                },
-            ],
+					if ($type === 'json') {
+						if (is_array($value) && !empty($value)) {
+							return;
+						}
+
+						if (is_string($value)) {
+							// Valida a string JSON
+							json_decode($value);
+							if (json_last_error() !== JSON_ERROR_NONE) {
+								$fail('O campo ' . $attribute . ' deve ser uma string JSON válida.');
+							}
+						} else {
+							$fail('O campo ' . $attribute . ' deve ser um array ou uma string JSON válida.');
+						}
+					}
+					if ($type === 'xml') {
+						// Valida XML como string
+						if (is_string($value)) {
+							try {
+								new \SimpleXMLElement($value);
+							} catch (\Exception $e) {
+								$fail('O campo ' . $attribute . ' deve ser uma string XML válida.');
+							}
+						} else {
+							$fail('O campo ' . $attribute . ' deve ser uma string XML válida.');
+						}
+					}
+				},
+			],
         ];
     }
 
