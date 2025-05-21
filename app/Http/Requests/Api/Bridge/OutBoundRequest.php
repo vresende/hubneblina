@@ -50,7 +50,7 @@ class OutBoundRequest extends FormRequest
 				'in:json,xml'
 			],
             'body.value' => [
-                Rule::requiredIf(fn() => strtolower($this->input('method')) === 'get'),
+                Rule::requiredIf(fn() => strtolower($this->input('method')) !== 'get'),
                 function ($attribute, $value, $fail) {
                     if (!$this->input('body')) {
                         return;
@@ -83,6 +83,7 @@ class OutBoundRequest extends FormRequest
                         // Valida XML como string
                         if (is_string($value)) {
                             try {
+                                new \SimpleXMLElement($value);
                             } catch (Exception $e) {
                                 $fail('O campo ' . $attribute . ' deve ser uma string XML válida.');
                             }
