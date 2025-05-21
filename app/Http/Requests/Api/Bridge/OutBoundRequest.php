@@ -58,7 +58,7 @@ class OutBoundRequest extends FormRequest
 					$type = $this->input('body.type');
 
 					if ($type === 'json') {
-						if (is_array($value) && !empty($value)) {
+						if (is_array($value)) {
 							return;
 						}
 
