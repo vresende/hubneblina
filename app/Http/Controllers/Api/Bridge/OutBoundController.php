@@ -55,7 +55,7 @@
 				$decoded = json_decode($response->body(), true);
 				$responseBody = json_last_error() === JSON_ERROR_NONE ? $decoded : $response->body();
 
-				return response()->json(['body' => $responseBody], $response->status())
+				return response()->json($responseBody, $response->status())
 					->withHeaders($response->headers());
 			} catch (\Exception $e) {
 				return response()->json([
