@@ -40,34 +40,32 @@ class OutBoundController extends Controller
                 $response = $http->get($endpoint);
             } else {
                 $bodyType = $data['body']['type'] ?? 'json';
-                $bodyValue = $data['body']['value'] ?? [];
+                $bodyValue = $data['body']['value'] ?? '';
 
                 if ($bodyType === 'json') {
-                    $response = $http->{$method}($endpoint, $bodyValue);
-                } else {
-                    // XML: envia como string bruta
+                    // Envia o JSON exatamente como foi recebido, sem parse
                     $response = $http
-                        ->withBody($bodyValue, 'application/xml')
+                        ->withBody((string) $bodyValue, 'application/json')
+                        ->{$method}($endpoint);
+                } else {
+                    // XML ou outros: envia como string bruta
+                    $response = $http
+                        ->withBody((string) $bodyValue, 'application/xml')
                         ->{$method}($endpoint);
                 }
             }
 
-            // Tenta interpretar como JSON, senão retorna string bruta
-            //$decoded = json_decode($response->body(), true);
-            //$responseBody =  $response->body();
-            //	return response()->json($responseBody, $response->status())
-            //		->withHeaders($response->headers());
-            return response()->stream(function () use ($response) {
-                echo $response->body();
-            }, $response->status(), array_merge(
-                ['Content-Type' => 'application/json'],
+            return response()->stream(
+                fn () => print($response->body()),
+                $response->status(),
                 $response->headers()
-            ));
+            );
         } catch (Exception $e) {
             return response()->json([
                 'success' => false,
                 'message' => $e->getMessage()
             ], 500);
         }
+
     }
 }
