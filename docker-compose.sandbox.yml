@@ -1,0 +1,37 @@
+services:
+    pj-neblina-laravel-hub:
+        build:
+            context: ./docker/php
+            dockerfile: Dockerfile
+        volumes:
+            - ./:/var/www
+            - ./docker/server_start.sh:/usr/local/bin/server_start.sh
+            - ./docker/php/custom.ini:/usr/local/etc/php/conf.d/custom.ini
+            - ./storage:/var/www/storage
+            - ./vendor:/var/www/vendor
+        ports:
+            - "8181:8081"
+        environment:
+            APP_ENV: ${APP_ENV}
+            APP_DEBUG: ${APP_DEBUG:-true}
+            APP_URL: ${APP_URL}
+            DB_CONNECTION: ${SANDBOX_DB_CONNECTION}
+            DB_HOST: ${SANDBOX_DB_HOST}
+            DB_PORT: ${SANDBOX_DB_PORT:-3306}
+            DB_DATABASE: ${SANDBOX_DB_DATABASE:-sandbox}
+            DB_USERNAME: ${SANDBOX_DB_USERNAME:-sandbox}
+            DB_PASSWORD: ${SANDBOX_DB_PASSWORD:-sandbox_password}
+            TZ: America/Sao_Paulo
+        command: ["/bin/sh", "-c", "/bin/bash /usr/local/bin/server_start.sh"]
+        networks:
+            - app-network
+        deploy:
+            resources:
+                limits:
+                    cpus: '1.0'
+                    memory: 2G
+
+networks:
+    app-network:
+        name: "app-network"
+        driver: bridge
