@@ -13,7 +13,7 @@ services:
     environment:
       APP_ENV: sandbox
       APP_DEBUG: true
-      APP_URL: https://sandbox.grupomater.com.br
+      APP_URL: https://sandbox.grupomater.com.br/hub
       DB_CONNECTION: ${SANDBOX_DB_CONNECTION}
       DB_HOST: ${SANDBOX_DB_HOST}
       DB_PORT: ${SANDBOX_DB_PORT}
@@ -25,24 +25,21 @@ services:
     networks:
       - sandbox-hub-network
       - traefik_proxy
+
     labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.sandbox-hub.rule=Host(`sandbox.grupomater.com.br`) && PathPrefix(`/hub`)"
-      - "traefik.http.routers.sandbox-hub.entrypoints=websecure"
-      - "traefik.http.routers.sandbox-hub.tls.certresolver=letsencrypt"
-      - "traefik.http.routers.sandbox-hub.middlewares=sandbox-strip-hub"
-      - "traefik.http.services.sandbox-hub.loadbalancer.server.port=8181"
-      - "traefik.http.middlewares.sandbox-strip-hub.stripPrefix.prefixes=/hub"
-    deploy:
-      resources:
-        limits:
-          cpus: '1.0'
-          memory: 2G
+      traefik.enable: "true"
+      traefik.http.routers.hub.rule: >
+        Host(`sandbox.grupomater.com.br`) && PathPrefix(`/hub`)
+      traefik.http.routers.hub.entrypoints: websecure
+      traefik.http.routers.hub.tls.certresolver: letsencrypt
+      traefik.http.routers.hub.middlewares: replace-hub
+      traefik.http.services.hub.loadbalancer.server.port: "8081"
+      traefik.http.middlewares.replace-hub.replacepathregex.regex: ^/hub(.*)
+      traefik.http.middlewares.replace-hub.replacepathregex.replacement: /api$$1
 
 networks:
-  sandbox-hub-network:
-    name: sandbox-hub-network
+  prod-hub-network:
+    name: prod-hub-network
     driver: bridge
   traefik_proxy:
     external: true
-

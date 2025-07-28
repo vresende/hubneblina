@@ -1,48 +1,43 @@
 services:
-  pj-neblina-laravel-hub:
-    container_name: pj-neblina-laravel-hub
-    build:
-      context: ./docker/php
-      dockerfile: Dockerfile
-    volumes:
-      - ./:/var/www
-      - ./docker/server_start.sh:/usr/local/bin/server_start.sh
-      - ./docker/php/custom.ini:/usr/local/etc/php/conf.d/custom.ini
-      - ./storage:/var/www/storage
-      - ./vendor:/var/www/vendor
-    environment:
-      APP_ENV: production
-      APP_DEBUG: false
-      APP_URL: https://integra.grupomater.com.br
-      DB_CONNECTION: ${DB_CONNECTION}
-      DB_HOST: ${DB_HOST}
-      DB_PORT: ${DB_PORT}
-      DB_DATABASE: ${DB_DATABASE}
-      DB_USERNAME: ${DB_USERNAME}
-      DB_PASSWORD: ${DB_PASSWORD}
-      TZ: America/Sao_Paulo
-    command: ["/bin/sh", "-c", "/bin/bash /usr/local/bin/server_start.sh"]
-    networks:
-      - prod-hub-network
-      - traefik_proxy
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.hub.rule=Host(`integra.grupomater.com.br`) && PathPrefix(`/hub`)"
-      - "traefik.http.routers.hub.entrypoints=websecure"
-      - "traefik.http.routers.hub.tls.certresolver=letsencrypt"
-      - "traefik.http.routers.hub.middlewares=strip-hub"
-      - "traefik.http.services.hub.loadbalancer.server.port=8081"
-      - "traefik.http.middlewares.strip-hub.stripPrefix.prefixes=/hub"
-    deploy:
-      resources:
-        limits:
-          cpus: '1.0'
-          memory: 2G
-
+    pj-neblina-laravel-hub:
+        container_name: pj-neblina-laravel-hub
+        build:
+            context: ./docker/php
+            dockerfile: Dockerfile
+        volumes:
+            - ./:/var/www
+            - ./docker/server_start.sh:/usr/local/bin/server_start.sh
+            - ./docker/php/custom.ini:/usr/local/etc/php/conf.d/custom.ini
+            - ./storage:/var/www/storage
+            - ./vendor:/var/www/vendor
+        environment:
+            APP_ENV: production
+            APP_DEBUG: "false"
+            APP_URL: ${APP_URL}
+            DB_CONNECTION: ${DB_CONNECTION}
+            DB_HOST: ${DB_HOST}
+            DB_PORT: ${DB_PORT}
+            DB_DATABASE: ${DB_DATABASE}
+            DB_USERNAME: ${DB_USERNAME}
+            DB_PASSWORD: ${DB_PASSWORD}
+            TZ: America/Sao_Paulo
+        command: ["/bin/bash", "/usr/local/bin/server_start.sh"]
+        networks:
+            - prod-hub-network
+            - traefik_proxy
+        labels:
+            traefik.enable: "true"
+            traefik.http.routers.hub.rule: >
+                Host(`integra.grupomater.com.br`) && PathPrefix(`/hub`)
+            traefik.http.routers.hub.entrypoints: websecure
+            traefik.http.routers.hub.tls.certresolver: letsencrypt
+            traefik.http.routers.hub.middlewares: replace-hub
+            traefik.http.services.hub.loadbalancer.server.port: "8081"
+            traefik.http.middlewares.replace-hub.replacepathregex.regex: ^/hub(.*)
+            traefik.http.middlewares.replace-hub.replacepathregex.replacement: /api$$1
 networks:
-  prod-hub-network:
-    name: prod-hub-network
-    driver: bridge
-  traefik_proxy:
-    external: true
-
+    prod-hub-network:
+        name: prod-hub-network
+        driver: bridge
+    traefik_proxy:
+        external: true
