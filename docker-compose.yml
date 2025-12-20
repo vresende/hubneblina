@@ -9,8 +9,6 @@ services:
             - ./docker/php/custom.ini:/usr/local/etc/php/conf.d/custom.ini
             - ./storage:/var/www/storage
             - ./vendor:/var/www/vendor
-        ports:
-            - "8081:8081"
         environment:
             APP_ENV: ${APP_ENV}
             APP_DEBUG: ${APP_DEBUG}

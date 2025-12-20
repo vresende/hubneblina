@@ -1,5 +1,7 @@
 services:
-    pj-neblina-laravel-hub:
+    sandbox-pj-neblina-laravel-hub:
+        container_name: sandbox-pj-neblina-laravel-hub
+        image: hubneblina_pj-neblina-laravel-hub:latest
         build:
             context: ./docker/php
             dockerfile: Dockerfile
@@ -10,7 +12,7 @@ services:
             - ./storage:/var/www/storage
             - ./vendor:/var/www/vendor
         ports:
-            - "8181:8081"
+            - "8981:8081"
         environment:
             APP_ENV: ${APP_ENV}
             APP_DEBUG: ${APP_DEBUG:-true}
@@ -24,7 +26,7 @@ services:
             TZ: America/Sao_Paulo
         command: ["/bin/sh", "-c", "/bin/bash /usr/local/bin/server_start.sh"]
         networks:
-            - app-network
+            - sandbox-app-network
         deploy:
             resources:
                 limits:
@@ -32,6 +34,6 @@ services:
                     memory: 2G
 
 networks:
-    app-network:
-        name: "app-network"
+    sandbox-app-network:
+        name: "sandbox-app-network"
         driver: bridge
