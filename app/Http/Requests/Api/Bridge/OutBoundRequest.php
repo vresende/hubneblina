@@ -8,7 +8,6 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Validation\Rule;
 
-
 class OutBoundRequest extends FormRequest
 {
     /**
@@ -33,26 +32,26 @@ class OutBoundRequest extends FormRequest
                 'nullable',
                 'bail',
                 function ($attribute, $value, $fail) {
-                    if (!is_string($value) && !is_array($value)) {
+                    if (! is_string($value) && ! is_array($value)) {
                         $fail("O campo $attribute deve ser uma string ou um array.");
                     }
                 },
             ],
             'endpoint' => 'required|url',
             'method' => 'required|string|in:get,post,put,delete,patch',
-			'body' => [
-				Rule::requiredIf(fn() => strtolower($this->input('method')) === 'get'),
-				'array'
-			],
-			'body.type' => [
-				Rule::requiredIf(fn() => strtolower($this->input('method')) === 'get'),
-				'string',
-				'in:json,xml'
-			],
+            'body' => [
+                Rule::requiredIf(fn () => strtolower($this->input('method')) !== 'get'),
+                'array',
+            ],
+            'body.type' => [
+                Rule::requiredIf(fn () => strtolower($this->input('method')) !== 'get'),
+                'string',
+                'in:json,xml',
+            ],
             'body.value' => [
-                Rule::requiredIf(fn() => strtolower($this->input('method')) !== 'get'),
+                Rule::requiredIf(fn () => strtolower($this->input('method')) !== 'get'),
                 function ($attribute, $value, $fail) {
-                    if (!$this->input('body')) {
+                    if (! $this->input('body')) {
                         return;
                     }
 
@@ -73,10 +72,10 @@ class OutBoundRequest extends FormRequest
                             // Valida a string JSON
                             json_decode($value);
                             if (json_last_error() !== JSON_ERROR_NONE) {
-                                $fail('O campo ' . $attribute . ' deve ser uma string JSON válida.');
+                                $fail('O campo '.$attribute.' deve ser uma string JSON válida.');
                             }
                         } else {
-                            $fail('O campo ' . $attribute . ' deve ser um array ou uma string JSON válida.');
+                            $fail('O campo '.$attribute.' deve ser um array ou uma string JSON válida.');
                         }
                     }
                     if ($type === 'xml') {
@@ -85,13 +84,13 @@ class OutBoundRequest extends FormRequest
                             try {
                                 new \SimpleXMLElement($value);
                             } catch (Exception $e) {
-                                $fail('O campo ' . $attribute . ' deve ser uma string XML válida.');
+                                $fail('O campo '.$attribute.' deve ser uma string XML válida.');
                             }
                         } else {
-                            $fail('O campo ' . $attribute . ' deve ser uma string XML válida.');
+                            $fail('O campo '.$attribute.' deve ser uma string XML válida.');
                         }
                     }
-                }
+                },
             ],
         ];
     }
@@ -103,7 +102,7 @@ class OutBoundRequest extends FormRequest
     {
         throw new HttpResponseException(response()->json([
             'success' => false,
-            'errors' => $validator->errors()
+            'errors' => $validator->errors(),
         ], 400));
     }
 }
