@@ -43,9 +43,12 @@ class OutBoundController extends Controller
                 $bodyValue = $data['body']['value'] ?? '';
 
                 if ($bodyType === 'json') {
-                    // Envia o JSON exatamente como foi recebido, sem parse
+                    $bodyValue = is_string($bodyValue)
+                        ? $bodyValue
+                        : json_encode($bodyValue, JSON_THROW_ON_ERROR);
+
                     $response = $http
-                        ->withBody((string) $bodyValue, 'application/json')
+                        ->withBody($bodyValue, 'application/json')
                         ->{$method}($endpoint);
                 } else {
                     // XML ou outros: envia como string bruta
